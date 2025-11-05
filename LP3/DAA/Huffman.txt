@@ -1,0 +1,47 @@
+# Step 1: Input text
+text = input("Enter text: ")
+
+# Step 2: Count frequency
+freq = {}
+for ch in text:
+    if ch in freq:
+        freq[ch] += 1
+    else:
+        freq[ch] = 1
+
+# Step 3: Make list of tuples: (freq, char)
+nodes = []
+for ch in freq:
+    nodes.append((freq[ch], ch))
+
+# Step 4: Build Huffman Tree
+while len(nodes) > 1:
+    # Sort by frequency
+    nodes = sorted(nodes)
+    left = nodes[0]
+    right = nodes[1]
+    # Merge two smallest
+    newNode = (left[0] + right[0], left, right)
+    nodes = nodes[2:]  # Remove used nodes
+    nodes.append(newNode)
+
+# Step 5: Get Huffman Codes
+codes = {}
+
+def get_codes(node, code=""):
+    if len(node) == 2:  # Leaf node
+        codes[node[1]] = code
+    else:
+        get_codes(node[1], code + "0")
+        get_codes(node[2], code + "1")
+
+get_codes(nodes[0])
+
+print("Huffman Codes:", codes)
+
+# Step 6: Encode text
+encoded = ""
+for ch in text:
+    encoded += codes[ch]
+
+print("Encoded Text:", encoded)
