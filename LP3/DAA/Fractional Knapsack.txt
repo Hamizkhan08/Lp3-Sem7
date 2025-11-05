@@ -19,3 +19,68 @@ capacity = 50
 
 print(f"Maximum value in Knapsack = {fractional_knapsack(value, weight, capacity)}")
 
+
+
+
+
+
+
+
+
+
+
+
+
+whole step by step working
+
+def fractional_knapsack(value, weight, capacity):
+    # Combine value and weight, then sort by value/weight ratio in descending order
+    items = sorted(zip(value, weight), key=lambda x: x[0] / x[1], reverse=True)
+
+    print("Items (value, weight, ratio) sorted by ratio:")
+    for v, w in items:
+        print(f"  Value = {v}, Weight = {w}, Ratio = {v/w:.2f}")
+    print("-" * 50)
+
+    total_value = 0
+    total_weight = 0
+
+    for i, (v, w) in enumerate(items, start=1):
+        if capacity == 0:
+            print("Knapsack is full now.")
+            break
+
+        print(f"Step {i}: Considering item (value={v}, weight={w})")
+
+        if capacity >= w:
+            # Take the whole item
+            total_value += v
+            total_weight += w
+            capacity -= w
+            print(f"  ✅ Took the entire item.")
+            print(f"  Added Value: {v}, Total Value: {total_value}, Remaining Capacity: {capacity}")
+        else:
+            # Take the fractional part of the item
+            fraction = capacity / w
+            value_added = v * fraction
+            total_value += value_added
+            total_weight += capacity
+            print(f"  ⚠️ Took {fraction*100:.2f}% of the item.")
+            print(f"  Added Value: {value_added:.2f}, Total Value: {total_value:.2f}")
+            capacity = 0  # Knapsack is full
+            break
+        print("-" * 50)
+
+    print(f"\n✅ Final Total Weight in Knapsack = {total_weight}")
+    print(f"✅ Final Total Value in Knapsack = {total_value}\n")
+    return total_value
+
+
+# Example Input
+value = [60, 100, 120]
+weight = [10, 20, 30]
+capacity = 50
+
+print(f"Maximum value in Knapsack = {fractional_knapsack(value, weight, capacity):.2f}")
+
+
