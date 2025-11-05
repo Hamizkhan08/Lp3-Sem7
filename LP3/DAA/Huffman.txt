@@ -16,10 +16,12 @@ for ch in freq:
 
 # Step 4: Build Huffman Tree
 while len(nodes) > 1:
-    # Sort by frequency
-    nodes = sorted(nodes)
+    # ✅ FIX: Sort by frequency only
+    nodes = sorted(nodes, key=lambda x: x[0])
+    
     left = nodes[0]
     right = nodes[1]
+
     # Merge two smallest
     newNode = (left[0] + right[0], left, right)
     nodes = nodes[2:]  # Remove used nodes
