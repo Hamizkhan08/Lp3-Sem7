@@ -1,23 +1,35 @@
 def fibonacci_iterative(n):
+    steps = 0
     if n <= 0:
-        return 0
+        steps += 1
+        return 0, steps
     elif n == 1:
-        return 1
+        steps += 1
+        return 1, steps
     a, b = 0, 1
     for _ in range(2, n + 1):
         a, b = b, a + b
-    return b
+        steps += 1
+    return b, steps
 
-def fibonacci_recursive(n):
+
+def fibonacci_recursive(n, steps=0):
+    steps += 1
     if n <= 0:
-        return 0
+        return 0, steps
     elif n == 1:
-        return 1
+        return 1, steps
     else:
-        return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+        val1, steps = fibonacci_recursive(n - 1, steps)
+        val2, steps = fibonacci_recursive(n - 2, steps)
+        return val1 + val2, steps
 
-# Example usage
+
 if __name__ == "__main__":
     n = int(input("Enter a positive integer to compute Fibonacci: "))
-    print(f"Fibonacci (Iterative) of {n}: {fibonacci_iterative(n)}")
-    print(f"Fibonacci (Recursive) of {n}: {fibonacci_recursive(n)}")
+    fib_iter, iter_steps = fibonacci_iterative(n)
+    print(f"\nFibonacci (Iterative) of {n} = {fib_iter}")
+    print(f"Step count (Iterative) = {iter_steps}")
+    fib_rec, rec_steps = fibonacci_recursive(n)
+    print(f"\nFibonacci (Recursive) of {n} = {fib_rec}")
+    print(f"Step count (Recursive) = {rec_steps}")
