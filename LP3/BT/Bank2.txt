@@ -1,0 +1,103 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.7.0 <0.9.0;
+
+contract SimpleBank {
+    struct client_account {
+        int client_id;
+        address client_address;
+        uint client_balance_in_ether;
+    }
+
+    client_account[] clients;
+    int clientCounter;
+    address payable manager;
+
+    modifier onlyManager() {
+        require(msg.sender == manager, "Only manager can call this!");
+        _;
+    }
+
+    modifier onlyClients() {
+        bool isclient = false;
+        for (uint i = 0; i < clients.length; i++) {
+            if (clients[i].client_address == msg.sender) {
+                isclient = true;
+                break;
+            }
+        }
+        require(isclient, "Only clients can call this!");
+        _;
+    }
+
+    constructor() {
+        clientCounter = 0;
+    }
+
+    receive() external payable {}
+
+    function setManager(address managerAddress) public returns (string memory) {
+        manager = payable(managerAddress);
+        return "";
+    }
+
+    function joinAsClient() public payable returns (string memory) {
+        clients.push(client_account(clientCounter++, msg.sender, address(msg.sender).balance));
+        return "";
+    }
+
+    function deposit() public payable onlyClients {
+        payable(address(this)).transfer(msg.value);
+    }
+
+    function withdraw(uint amount) public payable onlyClients {
+        payable(msg.sender).transfer(amount * 1 ether);
+    }
+
+    function sendInterest() public payable onlyManager {
+        for (uint i = 0; i < clients.length; i++) {
+            address initialAddress = clients[i].client_address;
+            payable(initialAddress).transfer(1 ether);
+        }
+    }
+
+    function getContractBalance() public view returns (uint) {
+        return address(this).balance;
+    }
+}
+
+//Output steps
+//Initially All Acount has 100 fake ether
+//Step 1: Select first Address (eg.0x5B38Da6a701c568545dCfcB03FcB875f56beddC4)
+//Step 2: Click on Deploy button(Contract Created,Can view under Deployed Contract)
+//After deploying contract 100 ETH turns to 99.99999. ETH
+//Step 3: Set Manager: Follow Following instructions
+// i.Select Onother Address(eg.0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2)
+// ii.Copy this address (eg.0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2) and
+paste it in contract, infront of set Manager button
+// iii. click on set manager button, Now
+Manager=0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
+//Step 4: join as Client: Follow Following instructions
+// i.Select Onother Address(eg.0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db)
+// ii.Copy this address (eg.0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db) and
+paste it in contract, infront of joinAsClient button
+// iii.click on joinAsClient button, Now
+Client=0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
+//Initially Balanve in contract Will be 0 ETH(can view in Deployed Contract @ Bottom)
+//Step 5: Deposit:
+// i.Select Client Address(eg.0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2)
+// ii. Enter 10 ETH ammount in Value Field, Select unit as ETH from dropdown
+// iii. Come to the Deployed Contract, Click on deposit button
+// iv. 10 ETH transper to Contract , Balance will be updated to 10 ETH in Contract
+// V. 10 ETH will be minus from clients Wallet
+//Step 6: Withdraw:
+// i.Select Client Address(eg.0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2)
+// ii. Enter 5 ETH ammount in front of withdrow button
+// iii. Click on withdrow button
+// iv. 5 ETH transper to Wallet
+// V. 5 ETH will be Added to clients Wallet
+//Step 7: Send Interest:
+// i.Select Manager Address(eg.0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2)
+// ii.Come to contract, Click on sendInterest button
+// iii. According to logic written in code, 1 ETH as interest will be send to Client Wallet
+//Step 8: getContract Balance:
+// i.Click on getcontract bal
